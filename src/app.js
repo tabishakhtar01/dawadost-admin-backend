@@ -3,9 +3,21 @@ const cors = require("cors");
 
 const app = express();
 const orderRoute = require("./routes/order.route");
+const allowedOrigins = ["http://localhost:3000", process.env.CLIENT_URL];
+
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin(origin, callback) {
+      if (!origin) {
+        return callback(null, true);
+      }
+
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+
+      return callback(new Error("Not allowed by CORS"));
+    },
     credentials: true,
   }),
 );
