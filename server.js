@@ -8,8 +8,8 @@ const PORT = process.env.PORT || 5002;
 async function startServer() {
   await connectDB();
 
-  app.listen(PORT, () => {
-    console.log(`Admin server is running on port ${PORT}`);
+  app.listen(PORT, "0.0.0.0", () => {
+    console.log(`Server is running on port ${PORT}`);
   });
 }
 
