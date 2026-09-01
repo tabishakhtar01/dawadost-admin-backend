@@ -31,6 +31,6 @@ app.get("/api/health", (req, res) => {
   });
 });
 
-app.use("/api/orders", orderRoute);
+app.use("/api/admin/orders", orderRoute);
 
 module.exports = app;
