@@ -74,8 +74,38 @@ async function updateOrderStatus(req, res) {
   }
 }
 
+async function updatePaymentStatus(req, res) {
+  try {
+    const { paymentStatus } = req.body;
+
+    if (!paymentStatus) {
+      return res.status(400).json({
+        success: false,
+        message: "Payment status is required",
+      });
+    }
+
+    const order = await orderService.updatePaymentStatus(
+      req.params.orderId,
+      paymentStatus,
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: "Payment status updated successfully",
+      data: order,
+    });
+  } catch (error) {
+    return res.status(error.statusCode || 500).json({
+      success: false,
+      message: error.message || "Something went wrong",
+    });
+  }
+}
+
 module.exports = {
   getAllOrders,
   getOrderById,
   updateOrderStatus,
+  updatePaymentStatus,
 };

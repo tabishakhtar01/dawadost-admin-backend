@@ -167,8 +167,60 @@ async function updateOrderStatus(orderId, orderStatus) {
   return order;
 }
 
+const VALID_PAYMENT_STATUS_TRANSITIONS = {
+  pending: ["paid", "failed"],
+  paid: ["refunded"],
+  failed: [],
+  refunded: [],
+};
+
+async function updatePaymentStatus(orderId, paymentStatus) {
+  const order = await Order.findById(orderId);
+
+  if (!order) {
+    const error = new Error("Order not found");
+    error.statusCode = 404;
+
+    throw error;
+  }
+
+  const allowedStatuses = VALID_PAYMENT_STATUS_TRANSITIONS[order.paymentStatus];
+
+  if (!allowedStatuses) {
+    const error = new Error(
+      `Invalid current payment status: ${order.paymentStatus}`,
+    );
+
+    error.statusCode = 400;
+
+    throw error;
+  }
+
+  if (!allowedStatuses.includes(paymentStatus)) {
+    const error = new Error(
+      `Payment cannot be changed from ${order.paymentStatus} to ${paymentStatus}`,
+    );
+
+    error.statusCode = 400;
+
+    throw error;
+  }
+
+  order.paymentStatus = paymentStatus;
+
+  await order.save();
+
+  await order.populate({
+    path: "user",
+    select: "name phone age gender",
+  });
+
+  return order;
+}
+
 module.exports = {
   getAllOrders,
   getOrderById,
   updateOrderStatus,
+  updatePaymentStatus,
 };

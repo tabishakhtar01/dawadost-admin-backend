@@ -10,4 +10,6 @@ router.get("/:orderId", orderController.getOrderById);
 
 router.patch("/:orderId/status", orderController.updateOrderStatus);
 
+router.patch("/:orderId/payment-status", orderController.updatePaymentStatus);
+
 module.exports = router;
